@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular/standalone';
+import { StorageService } from '../services/storage';
 
 @Component({
   selector: 'app-home',
@@ -8,5 +9,11 @@ import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular/stan
   imports: [IonHeader, IonToolbar, IonTitle, IonContent],
 })
 export class HomePage {
-  constructor() {}
+
+  status: any;
+  constructor(private storageService: StorageService) {}
+
+  async inView(){
+    this.status = await this.storageService.get('status');
+  }
 }

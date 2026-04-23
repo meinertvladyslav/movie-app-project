@@ -1,7 +1,18 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Trending Movies</ion-title>
+    
   </ion-toolbar>
+  
+  <ion-searchbar
+      placeholder="Search movies"
+      (ionInput)="search($event)"
+    ></ion-searchbar>
+    <ion-select placeholder="Filter by year" (ionChange)="filterByYear($event)">
+  <ion-select-option value="">All years</ion-select-option>
+  <ion-select-option *ngFor="let y of years" [value]="y">{{ y }}</ion-select-option>
+</ion-select>
+
 </ion-header>
 <ion-buttons slot="end">
   <ion-button routerLink="/favourites">
@@ -11,7 +22,8 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col size="3" *ngFor="let movie of movies">
+      
+      <ion-col size="3" *ngFor="let movie of filteredMovies">
        
 
         <ion-card>

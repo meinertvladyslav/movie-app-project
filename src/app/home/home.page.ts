@@ -4,20 +4,23 @@ import { MovieApiService } from '../services/movie-api.service';
 import { StorageService } from '../services/storage.service';
 import { DatePipe, NgFor } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonImg, IonButtons } from '@ionic/angular/standalone';
+import { IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonImg, IonButtons, IonSearchbar } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonButtons,  NgFor, IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonImg, DatePipe, RouterLink, IonButtons]
+  imports: [IonSearchbar, IonButtons,  NgFor, IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonImg, DatePipe, RouterLink, IonButtons, IonSelect, IonSelectOption ]
 })
 export class HomePage implements OnInit {
 
   movies: any[] = [];
   status: any;
+  filteredMovies: any[] = [];
+  years: number[] = [];
+  selectedYear: string = '';
 
   constructor(
     private movieApi: MovieApiService,
@@ -26,13 +29,39 @@ export class HomePage implements OnInit {
   ) {}
 
   favourites: any[] = [];
+search(event: any) {
+  const query = event.target.value.toLowerCase();
 
+  if (!query) {
+    this.filteredMovies = this.movies;
+    return;
+  }
+
+  this.filteredMovies = this.movies.filter(movie =>
+    movie.title.toLowerCase().includes(query)
+  );
+}
 async ngOnInit() {
+  const currentYear = new Date().getFullYear();
+  this.years = Array.from({ length: 30 }, (_, i) => currentYear - i);
   this.movieApi.getTrendingMovies().subscribe((result: any) => {
     this.movies = result.results;
+    this.filteredMovies = result.results;
   });
 
   this.favourites = await this.storage.get('favourites') || [];
+}
+filterByYear(event: any) {
+  const year = event.detail.value;
+
+  if (!year) {
+    this.filteredMovies = this.movies;
+    return;
+  }
+
+  this.filteredMovies = this.movies.filter(movie =>
+    movie.release_date?.startsWith(year.toString())
+  );
 }
 
 
@@ -46,8 +75,7 @@ async addToFavourites(movie: any) {
   let favs = await this.storage.get('favourites') || [];
 
   if (!favs.find((m: any) => m.id === movie.id)) {
-    favs.push({
-      ...movie,
+    favs.push({ ...movie,
       year: movie.release_date?.split('-')[0]
     });
   }

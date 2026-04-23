@@ -1,0 +1,13 @@
+This application is built with Ionic and Angular. It displays trending movies from the TMDb API, allows users to view movie details by clicking on the poster of the movie, and supports adding and removing favourites using local storage and searching by title and year.
+App can run on iOS, Android, and Desktop.
+Technologu used:
+Angular,
+Ionic Framework,
+TypeScript,
+TMDb API,
+Ionic Storage.
+
+Commands to run:
+npm install - downloads all of the necessary dependancies
+ionic serve - activates the application
+https://github.com/meinertvladyslav/movie-app-project

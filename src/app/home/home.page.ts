@@ -68,9 +68,23 @@ filterByYear(event: any) {
   openDetails(id: number) {
     this.router.navigate(['/movie-details', id]);
   }
-  openMovie(movie: any) {
+  async openMovie(movie: any) {
+  let visited = await this.storage.get('visited') || [];
+
+  if (!visited.find((m: any) => m.id === movie.id)) {
+    visited.unshift({
+      ...movie,
+      year: movie.release_date?.split('-')[0]
+    });
+  }
+
+  visited = visited.slice(0, 20);
+
+  await this.storage.set('visited', visited);
+
   this.router.navigate(['/movie', movie.id]);
 }
+
 async addToFavourites(movie: any) {
   let favs = await this.storage.get('favourites') || [];
 
